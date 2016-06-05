@@ -33,9 +33,9 @@ def getFacilityNames():
 
 				items_list=[];
 				for item in data:
-						 i = {
-							'Name':item[0]
-						 }
+					 i = {
+						'Name':item[0]
+					 }
 					items_list.append(i)
 			return {'StatusCode':'200','Items':items_list}
 
