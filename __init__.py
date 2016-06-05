@@ -48,11 +48,11 @@ class GetFacilityNames(Resource):
 		try :
 			cursor = mysql.connection.cursor()
 				#cursor = conn.cursor()
-				cursor.callproc('sp_GetFacilityNames')
-				data = cursor.fetchall()
+			cursor.callproc('sp_GetFacilityNames')
+			data = cursor.fetchall()
 
 			items_list=[];
-				for item in data:
+			for item in data:
 				i = {
 					'Name':item[0]
 				}
