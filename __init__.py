@@ -26,21 +26,17 @@ def hello():
 @app.route('/GetFacilityNames', method=['GET'])
 def getFacilityNames():
 	try :
-				cursor = mysql.connection.cursor()
-				#cursor = conn.cursor()
-				cursor.callproc('sp_GetFacilityNames')
-				data = cursor.fetchall()
+		cursor = mysql.connection.cursor()
+		cursor.callproc('sp_GetFacilityNames')
+		data = cursor.fetchall()
 
-				items_list=[];
-				for item in data:
-					 i = {
-						'Name':item[0]
-					 }
-					items_list.append(i)
-			return {'StatusCode':'200','Items':items_list}
+		items_list=[];
+		for item in data:
+			items_list.append({'name':item[0]})
+		return {'StatusCode':'200','Items':items_list}
 
-		 except Exception as ex:
-				return {'error':str(ex)}
+	except Exception as ex:
+		return {'error':str(ex)}
 
 class Welcome(Resource):
 	@set_renderers(HTMLRenderer)
