@@ -26,21 +26,21 @@ def hello():
 @app.route('/GetFacilityNames', method=['GET'])
 def getFacilityNames():
 	try :
-               	cursor = mysql.connection.cursor()
-                #cursor = conn.cursor()
-                cursor.callproc('sp_GetFacilityNames')
-                data = cursor.fetchall()
+				cursor = mysql.connection.cursor()
+				#cursor = conn.cursor()
+				cursor.callproc('sp_GetFacilityNames')
+				data = cursor.fetchall()
 
-                items_list=[];
-             	for item in data:
-                         i = {
-                         	'Name':item[0]
-                         }
-                	items_list.append(i)
-         	return {'StatusCode':'200','Items':items_list}
+				items_list=[];
+				for item in data:
+						 i = {
+							'Name':item[0]
+						 }
+					items_list.append(i)
+			return {'StatusCode':'200','Items':items_list}
 
-         except Exception as ex:
-                return {'error':str(ex)}
+		 except Exception as ex:
+				return {'error':str(ex)}
 
 class Welcome(Resource):
 	@set_renderers(HTMLRenderer)
@@ -51,12 +51,12 @@ class GetFacilityNames(Resource):
 	def get(self):
 		try :
 			cursor = mysql.connection.cursor()
-		        #cursor = conn.cursor()
-		        cursor.callproc('sp_GetFacilityNames')
-        		data = cursor.fetchall()
+				#cursor = conn.cursor()
+				cursor.callproc('sp_GetFacilityNames')
+				data = cursor.fetchall()
 
 			items_list=[];
-        		for item in data:
+				for item in data:
 				i = {
 					'Name':item[0]
 				}
@@ -67,12 +67,12 @@ class GetFacilityNames(Resource):
 			return {'error':str(ex)}
 
 class HelloWorld(Resource):
-    def get(self):
-        return {'hello': 'world'}
+	def get(self):
+		return {'hello': 'world'}
 
 #api.add_resource(Welcome, '/')
 #api.add_resource(GetFacilityNames, '/GetFacilityNames')
 #api.add_resource(Welcome, '/')		
 
 if __name__ == "__main__":
-    app.run()
+	app.run()
