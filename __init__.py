@@ -23,7 +23,7 @@ api = Api(app)
 def hello():
 	return render_template('index.html')
 
-@app.route('/GetFacilityNames', method=['GET'])
+@app.route('/GetFacilityNames', methods=['GET'])
 def getFacilityNames():
 	try :
 		cursor = mysql.connection.cursor()
