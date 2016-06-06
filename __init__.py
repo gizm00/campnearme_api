@@ -6,6 +6,7 @@ from flask_api.decorators import set_renderers
 from flask_api.renderers import HTMLRenderer
 from flask import render_template
 import config
+import utilities
 from flask_mysqldb import MySQL
 
 app = FlaskAPI(__name__)
@@ -23,8 +24,32 @@ api = Api(app)
 def hello():
 	return render_template('index.html')
 
+@app.route('/GetFacilitiesNear/<float:lat,float:lon,float:radius>', methods=['GET'])
+def getFacilitiesNear(lat,lon, radius):
+	try :
+		cursor = mysql.connection.cursor()
+		if ((not lat) or (not lon) or (not radius)):
+			return {'error':'Must specify lat, lon, and radius for GetFacilitiesNear query'}
+		query_string = utilities.create_radial_query(lat,lon,radius)
+		cursor.execute(query_string)
+		data = cursor.fetchall()
+
+		items_list=[];
+		for item in data:
+			items_list.append({
+				'FacilityId_Name':item[0],
+				'FacilityName':item[1],
+				'FacilityLatitude':item[2],
+				'FacilityLongitude':item[3]
+				})
+		return {'StatusCode':'200','Items':items_list}
+
+	except Exception as ex:
+		return {'error':str(ex)}
+
+
 @app.route('/GetFacilityNames', methods=['GET'])
-def getFacilityNames():
+def getFacilityNames(): 
 	try :
 		cursor = mysql.connection.cursor()
 		cursor.callproc('sp_GetFacilityNames')
@@ -32,7 +57,7 @@ def getFacilityNames():
 
 		items_list=[];
 		for item in data:
-			items_list.append({'name':item[0]})
+			items_list.append({'FacilityName':item[0]})
 		return {'StatusCode':'200','Items':items_list}
 
 	except Exception as ex:
