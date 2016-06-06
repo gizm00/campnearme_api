@@ -33,6 +33,7 @@ def getFacilitiesNear():
 		lat = request.args.get('lat')
 		lon = request.args.get('lon')
 		radius = request.args.get('radius')
+		print('got radius stuff')
 		if ((not lat) or (not lon) or (not radius)):
 			return {'error':'Must specify lat, lon, and radius for GetFacilitiesNear query'}
 		query_string = utilities.create_radial_query(lat,lon,radius)
