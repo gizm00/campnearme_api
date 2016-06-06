@@ -25,8 +25,8 @@ api = Api(app)
 def hello():
 	return render_template('index.html')
 
-# expect GetFacilitiesNear/lat=34.13&lon=122.42&radius=10 where lat/lon in degrees and radius in miles
-@app.route('/GetFacilitiesNear/', methods=['GET'])
+# expect GetFacilitiesNear?lat=34.13&lon=122.42&radius=10 where lat/lon in degrees and radius in miles
+@app.route('/GetFacilitiesNear', methods=['GET'])
 def getFacilitiesNear():
 	try :
 		cursor = mysql.connection.cursor()
@@ -44,8 +44,8 @@ def getFacilitiesNear():
 			items_list.append({
 				'FacilityId_Name':item[0],
 				'FacilityName':item[1],
-				'FacilityLatitude':item[2],
-				'FacilityLongitude':item[3]
+				'FacilityLatitude':str(item[2]),
+				'FacilityLongitude':str(item[3])
 				})
 		return {'StatusCode':'200','Items':items_list}
 
