@@ -30,15 +30,14 @@ def hello():
 def getFacilitiesNear():
 	try :
 		cursor = mysql.connection.cursor()
-		lat = request.args.get('lat')
-		lon = request.args.get('lon')
-		radius = request.args.get('radius')
-
-		return {'lat':lat,'lon':lon,'radius':radius}
+		lat = float(request.args.get('lat'))
+		lon = float(request.args.get('lon'))
+		radius = float(request.args.get('radius'))
 		
 		if ((not lat) or (not lon) or (not radius)):
 			return {'error':'Must specify lat, lon, and radius for GetFacilitiesNear query'}
 		query_string = utilities.create_radial_query(lat,lon,radius)
+		#return {'query_string':query_string}
 		cursor.execute(query_string)
 		data = cursor.fetchall()
 
