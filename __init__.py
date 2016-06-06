@@ -8,6 +8,7 @@ from flask import render_template
 import config
 import utilities
 from flask_mysqldb import MySQL
+from flask import request
 
 app = FlaskAPI(__name__)
 mysql = MySQL(app)
@@ -24,10 +25,14 @@ api = Api(app)
 def hello():
 	return render_template('index.html')
 
-@app.route('/GetFacilitiesNear/<float:lat,float:lon,float:radius>', methods=['GET'])
-def getFacilitiesNear(lat,lon, radius):
+# expect GetFacilitiesNear/lat=34.13&lon=122.42&radius=10 where lat/lon in degrees and radius in miles
+@app.route('/GetFacilitiesNear/', methods=['GET'])
+def getFacilitiesNear():
 	try :
 		cursor = mysql.connection.cursor()
+		lat = request.args.get('lat')
+		lon = request.args.get('lon')
+		radius = request.args.get('radius')
 		if ((not lat) or (not lon) or (not radius)):
 			return {'error':'Must specify lat, lon, and radius for GetFacilitiesNear query'}
 		query_string = utilities.create_radial_query(lat,lon,radius)
