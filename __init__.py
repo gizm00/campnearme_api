@@ -51,7 +51,7 @@ def hello():
 def getFacilityDetails():
 	try :
 		cursor = mysql.connection.cursor()
-		query_string = "SELECT * FROM campnear_consolidated limit 20;"
+		query_string = "SELECT * FROM campnear_consolidated_toorcamp limit 20;"
 		df_items = pd.read_sql(query_string, mysql.connection)
 		return(process_data(df_items))
 
@@ -94,7 +94,7 @@ def getFacilitiesNear():
 def getFacilityNames(): 
 	try :
 		cursor = mysql.connection.cursor()
-		cursor.callproc('sp_GetFacilityNames')
+		cursor.execute('SELECT facilityname from campnear_consolidated_toorcamp')
 		data = cursor.fetchall()
 
 		items_list=[];
