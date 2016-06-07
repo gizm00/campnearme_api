@@ -23,8 +23,14 @@ app.config['MYSQL_DB'] = config.MYSQL_DATABASE_DBNAME
 api = Api(app)
 
 def replace_nan(value):
-	if value == 'NaN':
-		return null
+	try :
+		if np.isnan(value):
+			return None
+	except:
+		err = "value is not NaN convertable"
+
+	if (value == 'NaN'):
+		return None
 	else:
 		return value
 
@@ -52,7 +58,7 @@ def hello():
 # start_index is the campnear_id field, sequential from 0 to num records
 # GetFacilityDetails?start_id=start_index&limit=int_records
 @app.route('/GetAllFacilities', methods=['GET'])
-def getFacilityDetails():
+def getAllFacilities():
 	try :
 		start_id = request.args.get('start_id')
 		limit = request.args.get('limit')
