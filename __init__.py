@@ -48,6 +48,31 @@ def process_data(df_items):
 	except Exception as ex:
                 return {'error':str(ex)}
 
+
+def clean_start_limit(start_id, limit):
+	if not start_id:
+		start_id = 0
+        if not limit:
+                limit = 50
+
+        try :
+                start_id = int(start_id)
+        except Exception as ex:
+                err_str = 'start_id must be an integer'
+                return {'error':err_str}
+   
+        try :
+                limit = int(limit)
+        except Exception as ex:
+                err_str = 'limit must be an integer'
+                return {'error':err_str}
+
+        if (limit > 50):
+                return {'error':'limit must be <= 50'}
+	
+
+	return {'start_id':start_id,'limit':limit}
+
 @app.route('/', methods=['GET'])
 @set_renderers(HTMLRenderer)
 def hello():
@@ -62,27 +87,34 @@ def getAllFacilities():
 	try :
 		start_id = request.args.get('start_id')
 		limit = request.args.get('limit')
-		if not start_id:
-			start_id = 0
-		if not limit:
-			limit = 50
-
-		try :
-			start_id = int(start_id)
+		sl_dict = clean_start_limit(start_id,limit)
+		try:
+			start_id = sl_dict['start_id']
+			limit = sl_dict['limit']
 		except Exception as ex:
-			err_str = 'start_id must be an integer'
-			return {'error':err_str}
-		try :
-                        limit = int(limit)
-                except Exception as ex:
-                        err_str = 'limit must be an integer'
-                        return {'error':err_str}
+			return {'error': sl_dict}
+		
+#		if not start_id:
+#			start_id = 0
+#		if not limit:
+#			limit = 50
+#
+#		try :
+#			start_id = int(start_id)
+#		except Exception as ex:
+#			err_str = 'start_id must be an integer'
+#			return {'error':err_str}
+#		try :
+#                       limit = int(limit)
+#                except Exception as ex:
+#                        err_str = 'limit must be an integer'
+#                        return {'error':err_str}
 
-		if (limit > 50):
-			return {'error':'limit must be <= 50'}
+#		if (limit > 50):
+#			return {'error':'limit must be <= 50'}
 
 		cursor = mysql.connection.cursor()
-		end_id = start_id + limit - 1
+		end_id = start_id + limit-1
 		query_string = "SELECT * FROM campnear_consolidated_toorcamp where campnear_id between " + str(start_id) + " and " + str(end_id)
 		df_items = pd.read_sql(query_string, mysql.connection)
 		return(process_data(df_items))
@@ -91,6 +123,8 @@ def getAllFacilities():
 		return {'error':str(ex)}
 
 # expect GetFacilitiesNear?lat=34.13&lon=122.42&radius=10 where lat/lon in degrees and radius in miles
+# optional argument limit with number of records to fetch, i.e.
+# GetFacilitiesNear?lat=34.13&lon=122.42&radius=10&limit=50
 @app.route('/GetFacilitiesNear', methods=['GET'])
 def getFacilitiesNear():
 	try :
@@ -98,10 +132,12 @@ def getFacilitiesNear():
 		lat = float(request.args.get('lat'))
 		lon = float(request.args.get('lon'))
 		radius = float(request.args.get('radius'))
+		start_id = request.args.get('start_id')
+		limit = request.args.get('limit')
 		
 		if ((not lat) or (not lon) or (not radius)):
 			return {'error':'Must specify lat, lon, and radius for GetFacilitiesNear query'}
-		query_string = utilities.create_radial_query(lat,lon,radius)
+		query_string = utilities.create_radial_query(lat,lon,radius,start_id,limit)
 		df_items = pd.read_sql(query_string, mysql.connection)
                 return(process_data(df_items))
 		
