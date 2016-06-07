@@ -37,7 +37,7 @@ def process_data(df_items):
                                 val = replace_nan(value)
                                 item.update({col: val})
                         items_list.append(item)
-                return {'StatusCode':'200','Items':items_list}
+                return {'StatusCode':'200','NumRecords':df_items.campnear_id.count() ,'Items':items_list}
 
 	except Exception as ex:
                 return {'error':str(ex)}
@@ -46,12 +46,38 @@ def process_data(df_items):
 @set_renderers(HTMLRenderer)
 def hello():
 	return render_template('index.html')
-# expect GetFacilityDetails?facilityid_name=facid_name_str
+
+
+# expect GetFacilityDetails with optional params limit (max 50) and start_index
+# start_index is the campnear_id field, sequential from 0 to num records
+# GetFacilityDetails?start_id=start_index&limit=int_records
 @app.route('/GetAllFacilities', methods=['GET'])
 def getFacilityDetails():
 	try :
+		start_id = request.args.get('start_id')
+		limit = request.args.get('limit')
+		if not start_id:
+			start_id = 0
+		if not limit:
+			limit = 50
+
+		try :
+			start_id = int(start_id)
+		except Exception as ex:
+			err_str = 'start_id must be an integer'
+			return {'error':err_str}
+		try :
+                        limit = int(limit)
+                except Exception as ex:
+                        err_str = 'limit must be an integer'
+                        return {'error':err_str}
+
+		if (limit > 50):
+			return {'error':'limit must be <= 50'}
+
 		cursor = mysql.connection.cursor()
-		query_string = "SELECT * FROM campnear_consolidated_toorcamp limit 20;"
+		end_id = start_id + limit - 1
+		query_string = "SELECT * FROM campnear_consolidated_toorcamp where campnear_id between " + str(start_id) + " and " + str(end_id)
 		df_items = pd.read_sql(query_string, mysql.connection)
 		return(process_data(df_items))
 
@@ -72,19 +98,6 @@ def getFacilitiesNear():
 		query_string = utilities.create_radial_query(lat,lon,radius)
 		df_items = pd.read_sql(query_string, mysql.connection)
                 return(process_data(df_items))
-		
-		#cursor.execute(query_string)
-		#data = cursor.fetchall()
-
-		#items_list=[];
-		#for item in data:
-		#	items_list.append({
-		#		'FacilityId_Name':item[0],
-		#		'FacilityName':item[1],
-		#		'FacilityLatitude':str(item[2]),
-		#		'FacilityLongitude':str(item[3])
-		#		})
-		#return {'StatusCode':'200','Items':items_list}
 		
 	except Exception as ex:
 		return {'error':str(ex)}
