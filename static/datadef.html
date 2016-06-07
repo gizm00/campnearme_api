@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+ 
+<head>
+    <title>campnear.me API</title>
+ 
+ 
+    <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+ 
+    <link href="http://getbootstrap.com/examples/jumbotron-narrow/jumbotron-narrow.css" rel="stylesheet">
+ 
+ 
+</head>
+ 
+<body>
+ 
+    <div class="container">
+        <div class="header">
+            <nav>
+                <ul class="nav nav-pills pull-right">
+                    <li role="presentation" class="active"><a href="/">Home</a>
+                    </li>
+                    <li role="presentation"><a href="showSignUp">Get Access</a>
+                    </li>
+                </ul>
+            </nav>
+            <h3 class="text-muted">campnear.me API</h3>
+        </div>
+ 
+        <div class="jumbotron">
+            <h1>Data Definition</h1>
+            <p class="lead"></p>
+        </div>
+ 
+        <div class="row marketing">
+            <div class="col-lg-12">
+		<font color='red'>"cg_lookout":</font> True/False. Indicates of campground entry is a lookout<br>
+		<font color='red'>"recreationgov_url":</font> String. If populated, gives the recreation.gov URL for the campground<br>
+		<font color='red'>"cg_conditions":</font> String. Shows current conditions (as of last update)<br>
+		<font color='red'>"yurts_available":</font> True/False. Indicates if campground has yurts<br>
+		<font color='red'>"telephone":</font> Campground telephone number <br>
+		<font color='red'>"driveminutes":</font> Number of minutes to drive from Portland, OR - pair with drivehours below<br>
+		<font color='red'>"latlong":</font> Float,Float. Campground lat and long, i.e. 42.659147,-123.638272. NOTE the minus for longitude<br>
+		<font color='red'>"cg_reservable":</font> True/False. Indicates of campground is reservable<br>
+		<font color='red'>"cg_shower":</font> True/False. Indicates if showers are available at the campground<br>
+		<font color='red'>"facilityname":</font> String. Campground name<br>
+		<font color='red'>"nofee":</font> String/ True/False. Indicates if campground has no fee for camping<br>
+		<font color='red'>"level_0":</font> Int. Extraneous non unique number<br>
+		<font color='red'>"facilityid_name":</font> Alphanumeric string identifying the campground (unique)<br>
+		<font color='red'>"index":</font> Int. Ignore<br>
+		<font color='red'>"drivehours":</font> Number of hours to drive from Portland, OR - pair with driveminutes above<br>
+		<font color='red'>"matchid":</font> Number for internal matching. Ignore<br>
+		<font color='red'>"fs_link":</font> Link to the usds.fs* site for the campground, if available<br>
+		<font color='red'>"cg_usage":</font> String. Typically "light","medium","heavy" to indicate how heavily used the campground is<br>
+		<font color='red'>"matchdist":</font> For internal use. Ignore<br>
+		<font color='red'>"site_url":</font> URL for the campground, typically from the agency which runs the facility<br>
+		<font color='red'>"cg_water":</font> String - false/unknown/true/seasonal - indication of water availability onsite<br>
+		<font color='red'>"other_link":</font> additional campground URL if available<br>
+		<font color='red'>"drivemiles":</font> number of miles from Portland, OR to the campground<br>
+		<font color='red'>"cg_solitude":</font> True/False. Special sauce of determining if this is a good place for solitude or not<br>
+		<font color='red'>"reserveamerica_url":</font> URL for reserveamerica.com if available<br>
+		<font color='red'>"cg_petsallowed":</font> True/False. Indicates if campground has an established pet policy<br>
+		<font color='red'>"elevation":</font> elevation of the campground in feet above sea level.<br>
+		<font color='red'>"reservation_link":</font> URL to query for reservation information<br>
+		<font color='red'>"cabins_available":</font> True/False. Indicates if there are cabins available at the campground<br>
+		<font color='red'>"transitminutes":</font> Number of minutes on public transit from Portland, OR to campground. Pair with transithours below.<br>
+		<font color='red'>"cg_nearriver":</font> True/False. Indicates if campground is near a river<br>
+		<font color='red'>"cg_fcfs":</font> True/False. Indicates if campground is first come, first served<br>
+		<font color='red'>"cg_nearbeach":</font> True/False. Indicates if the campground is on a beach. NOTE - does not guarantee that campSITES are on the beach.<br>
+		<font color='red'>"cg_transit_avail":</font> True/False. Indicates if public transit is available from Portland, OR to this campground<br>
+		<font color='red'>"cg_proximitytowater":</font> True/False. Indicates if the campground is near bodies of water - lakes, rivers, ocean<br>
+		<font color='red'>"cg_flush":</font> True/False. Indicates if flushing toilets are available at the campground<br>
+		<font color='red'>"campnear_id":</font> Int. Unique Id used to identify campgrounds. Use this for setting start_id in API queries<br>
+		<font color='red'>"cg_group":</font> True/False. Indicates if campground has group camping<br>
+		<font color='red'>"facilitylatitude":</font> Float.<br>
+		<font color='red'>"facilityid":</font> Agency campground id. Not unique<br>
+		<font color='red'>"matchname":</font> For internal use, ignore.<br>
+		<font color='red'>"cg_nearlake":</font> True/False. Indicates if campground is near a lake<br>
+		<font color='red'>"cg_accessible":</font> True/False. Indicates if the campground has accessible campsites<br>
+		<font color='red'>"cg_vault":</font> True/False. Indicates if vault toilets are available<br>
+		<font color='red'>"facilitylongitude":</font> Float.<br>
+		<font color='red'>"cg_season":</font> String indicating operation dates/seasons<br>
+		<font color='red'>"cg_status":</font> String. Campground status as of the last db update<br>
+		<font color='red'>"transithours":</font> Hours from Portland,OR to campground for public transit if available. Pair with transitminute above<br>
+            </div>
+ 
+        </div>
+ 
+        <footer class="footer">
+            <p>&copy; MxLeonard, The Data Scout 2016</p>
+        </footer>
+ 
+    </div>
+</body>
+ 
+</html>
