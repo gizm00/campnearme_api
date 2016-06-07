@@ -53,14 +53,6 @@ def getFacilityDetails():
 		cursor = mysql.connection.cursor()
 		query_string = "SELECT * FROM campnear_consolidated limit 20;"
 		df_items = pd.read_sql(query_string, mysql.connection)
-		#items_list=[]
-                #for index,row in df_items.iterrows():
-		#	item={}
-		#	for col,value in row.iteritems():
-		#		val = replace_nan(value)
-		#		item.update({col: val})
-		#	items_list.append(item)
-		#return {'StatusCode':'200','Items':items_list}
 		return(process_data(df_items))
 
 	except Exception as ex:
@@ -78,19 +70,22 @@ def getFacilitiesNear():
 		if ((not lat) or (not lon) or (not radius)):
 			return {'error':'Must specify lat, lon, and radius for GetFacilitiesNear query'}
 		query_string = utilities.create_radial_query(lat,lon,radius)
-		cursor.execute(query_string)
-		data = cursor.fetchall()
+		df_items = pd.read_sql(query_string, mysql.connection)
+                return(process_data(df_items))
+		
+		#cursor.execute(query_string)
+		#data = cursor.fetchall()
 
-		items_list=[];
-		for item in data:
-			items_list.append({
-				'FacilityId_Name':item[0],
-				'FacilityName':item[1],
-				'FacilityLatitude':str(item[2]),
-				'FacilityLongitude':str(item[3])
-				})
-		return {'StatusCode':'200','Items':items_list}
-
+		#items_list=[];
+		#for item in data:
+		#	items_list.append({
+		#		'FacilityId_Name':item[0],
+		#		'FacilityName':item[1],
+		#		'FacilityLatitude':str(item[2]),
+		#		'FacilityLongitude':str(item[3])
+		#		})
+		#return {'StatusCode':'200','Items':items_list}
+		
 	except Exception as ex:
 		return {'error':str(ex)}
 
