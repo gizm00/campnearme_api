@@ -94,25 +94,6 @@ def getAllFacilities():
 		except Exception as ex:
 			return {'error': sl_dict}
 		
-#		if not start_id:
-#			start_id = 0
-#		if not limit:
-#			limit = 50
-#
-#		try :
-#			start_id = int(start_id)
-#		except Exception as ex:
-#			err_str = 'start_id must be an integer'
-#			return {'error':err_str}
-#		try :
-#                       limit = int(limit)
-#                except Exception as ex:
-#                        err_str = 'limit must be an integer'
-#                        return {'error':err_str}
-
-#		if (limit > 50):
-#			return {'error':'limit must be <= 50'}
-
 		cursor = mysql.connection.cursor()
 		end_id = start_id + limit-1
 		query_string = "SELECT * FROM campnear_consolidated_toorcamp where campnear_id between " + str(start_id) + " and " + str(end_id)
@@ -123,8 +104,6 @@ def getAllFacilities():
 		return {'error':str(ex)}
 
 # expect GetFacilitiesNear?lat=34.13&lon=122.42&radius=10 where lat/lon in degrees and radius in miles
-# optional argument limit with number of records to fetch, i.e.
-# GetFacilitiesNear?lat=34.13&lon=122.42&radius=10&limit=50
 @app.route('/GetFacilitiesNear', methods=['GET'])
 def getFacilitiesNear():
 	try :
@@ -132,12 +111,14 @@ def getFacilitiesNear():
 		lat = float(request.args.get('lat'))
 		lon = float(request.args.get('lon'))
 		radius = float(request.args.get('radius'))
-		start_id = request.args.get('start_id')
-		limit = request.args.get('limit')
 		
 		if ((not lat) or (not lon) or (not radius)):
 			return {'error':'Must specify lat, lon, and radius for GetFacilitiesNear query'}
-		query_string = utilities.create_radial_query(lat,lon,radius,start_id,limit)
+		
+		if (radius > 100):
+			return {'error':'radius must be <= 100 miles'}
+
+		query_string = utilities.create_radial_query(lat,lon,radius)
 		df_items = pd.read_sql(query_string, mysql.connection)
                 return(process_data(df_items))
 		
