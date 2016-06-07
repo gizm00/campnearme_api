@@ -9,6 +9,8 @@ import config
 import utilities
 from flask_mysqldb import MySQL
 from flask import request
+import pandas as pd
+import numpy as np 
 
 app = FlaskAPI(__name__)
 mysql = MySQL(app)
@@ -20,10 +22,49 @@ app.config['MYSQL_DB'] = config.MYSQL_DATABASE_DBNAME
 
 api = Api(app)
 
+def replace_nan(value):
+	if value == 'NaN':
+		return null
+	else:
+		return value
+
+def process_data(df_items):
+	try:
+		items_list=[]
+                for index,row in df_items.iterrows():
+                        item={}
+                        for col,value in row.iteritems():
+                                val = replace_nan(value)
+                                item.update({col: val})
+                        items_list.append(item)
+                return {'StatusCode':'200','Items':items_list}
+
+	except Exception as ex:
+                return {'error':str(ex)}
+
 @app.route('/', methods=['GET'])
 @set_renderers(HTMLRenderer)
 def hello():
 	return render_template('index.html')
+# expect GetFacilityDetails?facilityid_name=facid_name_str
+@app.route('/GetAllFacilities', methods=['GET'])
+def getFacilityDetails():
+	try :
+		cursor = mysql.connection.cursor()
+		query_string = "SELECT * FROM campnear_consolidated limit 20;"
+		df_items = pd.read_sql(query_string, mysql.connection)
+		#items_list=[]
+                #for index,row in df_items.iterrows():
+		#	item={}
+		#	for col,value in row.iteritems():
+		#		val = replace_nan(value)
+		#		item.update({col: val})
+		#	items_list.append(item)
+		#return {'StatusCode':'200','Items':items_list}
+		return(process_data(df_items))
+
+	except Exception as ex:
+		return {'error':str(ex)}
 
 # expect GetFacilitiesNear?lat=34.13&lon=122.42&radius=10 where lat/lon in degrees and radius in miles
 @app.route('/GetFacilitiesNear', methods=['GET'])
@@ -37,7 +78,6 @@ def getFacilitiesNear():
 		if ((not lat) or (not lon) or (not radius)):
 			return {'error':'Must specify lat, lon, and radius for GetFacilitiesNear query'}
 		query_string = utilities.create_radial_query(lat,lon,radius)
-		#return {'query_string':query_string}
 		cursor.execute(query_string)
 		data = cursor.fetchall()
 
