@@ -96,7 +96,7 @@ def getAllFacilities():
 		
 		cursor = mysql.connection.cursor()
 		end_id = start_id + limit-1
-		query_string = "SELECT * FROM campnear_consolidated_toorcamp where campnear_id between " + str(start_id) + " and " + str(end_id)
+		query_string = "SELECT * FROM toorcamp where campnear_id between " + str(start_id) + " and " + str(end_id)
 		df_items = pd.read_sql(query_string, mysql.connection)
 		return(process_data(df_items))
 
@@ -115,8 +115,8 @@ def getFacilitiesNear():
 		if ((not lat) or (not lon) or (not radius)):
 			return {'error':'Must specify lat, lon, and radius for GetFacilitiesNear query'}
 		
-		if (radius > 100):
-			return {'error':'radius must be <= 100 miles'}
+		if (radius > 25):
+			return {'error':'radius must be <= 25 miles'}
 
 		query_string = utilities.create_radial_query(lat,lon,radius)
 		df_items = pd.read_sql(query_string, mysql.connection)
@@ -130,12 +130,12 @@ def getFacilitiesNear():
 def getFacilityNames(): 
 	try :
 		cursor = mysql.connection.cursor()
-		cursor.execute('SELECT facilityname from campnear_consolidated_toorcamp')
+		cursor.execute('SELECT facilityname,campnear_id from toorcamp')
 		data = cursor.fetchall()
 
 		items_list=[];
 		for item in data:
-			items_list.append({'facilityname':item[0]})
+			items_list.append({'facilityname':item[0], 'campnear_id':item[1]})
 		return {'StatusCode':'200','Items':items_list}
 
 	except Exception as ex:

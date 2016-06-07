@@ -18,7 +18,7 @@ def create_radial_query(lat_in, long_in, radius):
        acos(sin(radians(" + str(lat_in) + "))*sin(radians(facilitylatitude)) + \
        cos(radians(" + str(lat_in) + "))*cos(radians(facilitylatitude))*cos(radians(facilitylongitude)-radians(" + str(long_in) + ")))\
         * " + str(r_earth) + " As D \
-		 From campnear_consolidated_toorcamp where \
+		 From toorcamp where \
 		acos(sin(radians(" + str(lat_in) + "))*sin(radians(facilitylatitude)) + \
 		  	cos(radians(" + str(lat_in) + "))*cos(radians(facilitylatitude))*cos(radians(facilitylongitude) - \
 		  		radians(" + str(long_in) + "))) * " + str(r_earth) + " < " + str(radius) + " order by D ;"
