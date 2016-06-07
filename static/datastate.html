@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+ 
+<head>
+    <title>campnear.me API</title>
+ 
+ 
+    <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+ 
+    <link href="http://getbootstrap.com/examples/jumbotron-narrow/jumbotron-narrow.css" rel="stylesheet">
+ 
+ 
+</head>
+ 
+<body>
+ 
+    <div class="container">
+        <div class="header">
+            <nav>
+                <ul class="nav nav-pills pull-right">
+                    <li role="presentation" class="active"><a href="/">Home</a>
+                    </li>
+                </ul>
+            </nav>
+            <h3 class="text-muted">campnear.me API</h3>
+        </div>
+ 
+        <div class="jumbotron">
+            <h1>State of the Data</h1>
+            <p class="lead"></p>
+        </div>
+ 
+        <div class="row marketing">
+            <div class="col-lg-12">
+		<h3>What exactly are we dealing with here?</h3>
+		This API provides access to the backend database for <a href="http://campnear.me" target=_blank>campnear.me</a>
+		<ul>
+			<li>Includes 3,000+ campgrounds in Oregon and Washington</li>
+			<li>Consolidation of info from Federal, state and local agencies</li>
+			<li>Reservation availability for the upcoming weekend</li>
+			<li>Facility URLs from a variety of sources pertaining to each facility</li>
+		</ul>
+		<br>
+		Some things to keep in mind:
+		<ul>
+			<li>Latitude/Longitude coordinates for the campgrounds are mostly not verified. Lost Lake campground is, for example, not actually in the middle of a lake as the Lat/Long would have you believe</li>
+			<li>There are duplicates in the dataset</li>
+			<li>There are URLs that end in 404s in the dataset</li>
+			<li>There will be times when this data will (gasp) be wrong.</li>
+		</ul>
+		<br>
+		The intent of this dataset is to consolidate available sources of campground information to give campers a better springboard for trip planning. It is certainly necessary to take information with a grain of salt and call the local ranger station before heading into an unfamiliar part of the woods
+
+            </div>
+ 
+        </div>
+ 
+        <footer class="footer">
+	<p>&copy; MxLeonard, <a href="http://www.thedatascout.com" target=_blank>The Data Scout</a> 2016</p>	
+        </footer>
+ 
+    </div>
+</body>
+ 
+</html>
