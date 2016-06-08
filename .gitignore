@@ -4,3 +4,6 @@ venv/*
 *.csv
 toorcamp.csv
 toorcamp_table.sql
+toorcamp.json
+*ipynb
+.ipynb_checkpoints/*
