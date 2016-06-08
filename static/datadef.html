@@ -32,6 +32,9 @@
  
         <div class="row marketing">
             <div class="col-lg-12">
+          <h3>A lot of data. Not kidding</h3>
+          Data for campnear.me is stored data warehouse style. Flat. Think of it as a data rave. There are 100 fields (!) which is why the API presently is conservative about the number of records you can fetch in one go. Hopefully this guide will help you wade through.
+          <br>
           <h4>Identifying Fields</h4>
         <font color='red'>"campnear_id":</font> Int. Unique Id used to identify campgrounds. Use this for setting start_id in API queries<br>
         <font color='red'>"facilityname":</font> String. Campground name<br>
@@ -84,12 +87,71 @@
 		<font color='red'>"cabins_available":</font> True/False. Indicates if there are cabins available at the campground  - NOT an idicator of cabins being available to reserve<br>
 
 		
-		
+		<h4>Reservability Scraping Fields</h4>
+		<font color='red'>"start_date":</font> mm/dd/YYYY indicating the start day (Friday) of the reservation window<br>
+		<font color='red'>"end_date":</font> mm/dd/YYYY indicating the end day (Sunday) of the reservation window<br>
+		<font color='red'>"last_updated":</font> mm/dd/YYYY indicating the last time availability for the above window was checked<br> 
+
+		<h4>Reservability Site Availability Fields</h4>
+		<font color='red'>"sites_available":</font> Number of sites available for above reservation window<br> 
+		<font color='red'>"total_sites":</font> Number of total sites at the campground<br> 
+
+		<h4>Reservability Site Information Fields</h4>
+		The below fields are an enumeration of the type of sites available to reserve in all campgrounds. Most campgrounds will have only a fraction of these available. null indicates that the given site type is not present at the campground, any numerical value indicates site availability for the reservation window above
+		<font color='red'>"primitive":</font> null or int<br> 
+		<font color='red'>"cabin_deluxe":</font> null or int<br> 
+		<font color='red'>"group_shelter_nonelectric":</font> null or int<br> 
+		<font color='red'>"walk_to":</font>null or int<br>
+		<font color='red'>"host_site":</font> null or int<br> 
+		<font color='red'>"management":</font> "0"<br> 
+		<font color='red'>"youth_camp":</font> null or int<br> 
+		<font color='red'>"picnic":</font> null or int<br> 
+		<font color='red'>"ada_standard":</font> null or int<br> 
+		<font color='red'>"horse_site":</font> null or int<br> 
+		<font color='red'>"ranches":</font> null or int<br> 
+		<font color='red'>"cabin":</font> null or int<br> 
+		<font color='red'>"lookout":</font> null or int<br> 
+		<font color='red'>"ada_standard_full":</font> null or int<br> 
+		<font color='red'>"group_walk_to":</font> null or int<br> 
+		<font color='red'>"barbeque":</font> null or int<br> 
+		<font color='red'>"group_shelter_electric":</font> null or int<br> 
+		<font color='red'>"standard_electric":</font> null or int<br> 
+		<font color='red'>"equestrian_nonelectric":</font> null or int<br> 
+		<font color='red'>"group_rv":</font> null or int<br> 
+		<font color='red'>"group_tent_only_area_nonelectric":</font> null or int<br> 
+		<font color='red'>"group_tent_only":</font> null or int<br> 
+		<font color='red'>"tent_site":</font> null or int<br> 
+		<font color='red'>"group_picnic_area":</font> null or int<br> 
+		<font color='red'>"pavilions":</font> null or int<br> 
+		<font color='red'>"picnic_shelter":</font> null or int<br> 
+		<font color='red'>"amphitheater":</font> null or int<br> 
+		<font color='red'>"standard_full":</font> null or int<br> 
+		<font color='red'>"totem_cabin":</font> null or int<br> 
+		<font color='red'>"group_standard_nonelectric":</font> null or int<br> 
+		<font color='red'>"ada_tent":</font> null or int<br> 
+		<font color='red'>"rv_electric":</font> null or int<br>
+		<font color='red'>"mooring":</font> null or int<br> 
+		<font color='red'>"cabin_nonelectric":</font> null or int<br> 
+		<font color='red'>"standard_nonelectric":</font> null or int<br>
+		<font color='red'>"horse_group_site":</font> null or int<br> 
+		<font color='red'>"yurt":</font> null or int<br> 
+		<font color='red'>"group_standard_area_electric":</font> null or int<br> 
+		<font color='red'>"rv_nonelectric":</font> null or int<br> 
+		<font color='red'>"cabin_electric":</font> null or int<br> 
+		<font color='red'>"group_day_use":</font> null or int<br> 
+		<font color='red'>"teepee":</font> null or int<br> 
+		<font color='red'>"group_standard_electric":</font> null or int<br> 
+		<font color='red'>"group_standard_area_nonelectric":</font> null or int<br> 
+		<font color='red'>"tent_only_nonelectric":</font> null or int<br> 
+		<font color='red'>"yurt_deluxe":</font> null or int<br> 
+		<font color='red'>"standard":</font> null or int<br>
+		<font color='red'>"meeting_hall":</font> null or int<br>
+				
 		<h4>Internal only / unused fields. Ignore</h4>
 		<font color='red'>"matchdist":</font> For internal use. Ignore<br>
 		<font color='red'>"matchid":</font> Number for internal matching. Ignore<br>
 		<font color='red'>"facilityid":</font> Agency campground id. Not unique<br>
-		<font color='red'>"matchname":</font> For internal use, ignore.<br>
+		<font color='red'>"matchname":</font> For internal use<br> ignore.<br>
 		<font color='red'>"level_0":</font> Int. Extraneous non unique number<br>
 		<font color='red'>"facilityid_name":</font> Alphanumeric string identifying the campground (unique)<br>
 		<font color='red'>"index":</font> Int. Ignore<br>
