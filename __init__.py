@@ -2,6 +2,7 @@ from flask import Flask
 from flask_restful import Resource, Api
 from flask_restful import reqparse
 from flask_api import FlaskAPI
+from flask_api import status
 from flask_api.decorators import set_renderers
 from flask_api.renderers import HTMLRenderer
 from flask import render_template
@@ -11,6 +12,7 @@ from flask_mysqldb import MySQL
 from flask import request
 import pandas as pd
 import numpy as np 
+from geopy.distance import vincenty
 
 app = FlaskAPI(__name__)
 mysql = MySQL(app)
@@ -43,10 +45,10 @@ def process_data(df_items):
                                 val = replace_nan(value)
                                 item.update({col: val})
                         items_list.append(item)
-                return {'StatusCode':'200','NumRecords':df_items.campnear_id.count() ,'Items':items_list}
+                return {'NumRecords':df_items.campnear_id.count() ,'Items':items_list}
 
 	except Exception as ex:
-                return {'error':str(ex)}
+                return {'error':str(ex)},status.HTTP_500_INTERNAL_SERVER_ERROR
 
 
 def clean_start_limit(start_id, limit):
@@ -92,7 +94,7 @@ def getAllFacilities():
 			start_id = sl_dict['start_id']
 			limit = sl_dict['limit']
 		except Exception as ex:
-			return {'error': sl_dict}
+			return {'error': sl_dict},status.HTTP_400_BAD_REQUEST
 		
 		cursor = mysql.connection.cursor()
 		end_id = start_id + limit-1
@@ -101,7 +103,7 @@ def getAllFacilities():
 		return(process_data(df_items))
 
 	except Exception as ex:
-		return {'error':str(ex)}
+		return {'error':str(ex)},status.HTTP_400_BAD_REQUEST
 
 # expect GetFacilitiesNear?lat=34.13&lon=122.42&radius=10 where lat/lon in degrees and radius in miles
 @app.route('/GetFacilitiesNear', methods=['GET'])
@@ -113,34 +115,66 @@ def getFacilitiesNear():
 		radius = float(request.args.get('radius'))
 		
 		if ((not lat) or (not lon) or (not radius)):
-			return {'error':'Must specify lat, lon, and radius for GetFacilitiesNear query'}
+			return {'error':'Must specify lat, lon, and radius for GetFacilitiesNear query'}, status.HTTP_400_BAD_REQUEST
 		
-		if (radius > 25):
-			return {'error':'radius must be <= 25 miles'}
+		if (radius > 50):
+			return {'error':'radius must be <= 50 miles'}, status.HTTP_400_BAD_REQUEST
 
 		query_string = utilities.create_radial_query(lat,lon,radius)
 		df_items = pd.read_sql(query_string, mysql.connection)
                 return(process_data(df_items))
 		
 	except Exception as ex:
-		return {'error':str(ex)}
+		return {'error':str(ex)},status.HTTP_400_BAD_REQUEST
 
-
-@app.route('/GetFacilityNames', methods=['GET'])
-def getFacilityNames(): 
+# expect paramter campnear_id
+# GetFacilityDetails?campnear_id=2315
+@app.route('/GetFacilityDetails', methods=['GET'])
+def getFacilityDetails(): 
 	try :
 		cursor = mysql.connection.cursor()
-		cursor.execute('SELECT facilityname,campnear_id from toorcamp')
-		data = cursor.fetchall()
+		try :
+			campnear_id = int(request.args.get('campnear_id'))
+		except Exception as ex:
+			return{'error':'campnear_id must be specified as an integer'},status.HTTP_400_BAD_REQUEST
+		
 
-		items_list=[];
-		for item in data:
-			items_list.append({'facilityname':item[0], 'campnear_id':item[1]})
-		return {'StatusCode':'200','Items':items_list}
+		query_string = 'SELECT * from toorcamp where campnear_id=' + str(campnear_id)
+		df_items = pd.read_sql(query_string, mysql.connection)
+                return(process_data(df_items))
 
 	except Exception as ex:
-		return {'error':str(ex)}
+		return {'error':str(ex)},status.HTTP_400_BAD_REQUEST
 
+@app.route('/GetAvailableFacilities', methods=['GET'])
+def getAvailableFacilities():
+	try: 
+		cursor = mysql.connection.cursor()
+		query_string = 'SELECT * from toorcamp where sites_available > 0'
+                df_items = pd.read_sql(query_string, mysql.connection)
+                return(process_data(df_items))
+
+        except Exception as ex:
+                return {'error':str(ex)},status.HTTP_400_BAD_REQUEST
+
+# expect /GetDistanceBetween?lat1=44.12&lon1=-122.23&lat2=43.54&lon2=-122.45
+
+@app.route('/GetDistanceBetween', methods=['GET'])
+def getDistanceBetween() :
+	try :
+		lat1 = float(request.args.get('lat1'))
+                lon1 = float(request.args.get('lon1'))
+		lat2 = float(request.args.get('lat2'))
+                lon2 = float(request.args.get('lon2'))	
+	except:
+		return {'error':'GetDistanceBetween: float values lat1,lon1,lat2,lon2 expected'},status.HTTP_400_BAD_REQUEST 
+
+	try:
+		distance = vincenty((lat1,lon1),(lat2,lon2)).miles
+	except Exception as ex:
+		return {'error':str(ex)},status.HTTP_500_INTERNAL_SERVER_ERROR
+
+	return {'distance':distance}
 
 if __name__ == "__main__":
 	app.run()
