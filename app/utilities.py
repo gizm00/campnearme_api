@@ -14,11 +14,11 @@ def create_radial_query(lat_in, long_in, radius):
 	maxLon = long_in + math.degrees(math.asin(radius/r_earth) / math.cos(math.radians(lat_in)))
 	minLon = long_in - math.degrees(math.asin(radius/r_earth) / math.cos(math.radians(lat_in)))
 
-	query_str = "select facilityname, campnear_id, facilitylatitude, facilitylongitude,\
+	query_str = "select facilityname, facilityindex, facilitylatitude, facilitylongitude,\
        acos(sin(radians(" + str(lat_in) + "))*sin(radians(facilitylatitude)) + \
        cos(radians(" + str(lat_in) + "))*cos(radians(facilitylatitude))*cos(radians(facilitylongitude)-radians(" + str(long_in) + ")))\
         * " + str(r_earth) + " As distance \
-		 From toorcamp where \
+		 From ridb_facilities_orig where \
 		acos(sin(radians(" + str(lat_in) + "))*sin(radians(facilitylatitude)) + \
 		  	cos(radians(" + str(lat_in) + "))*cos(radians(facilitylatitude))*cos(radians(facilitylongitude) - \
 		  		radians(" + str(long_in) + "))) * " + str(r_earth) + " < " + str(radius) + " order by distance ;"
@@ -26,4 +26,3 @@ def create_radial_query(lat_in, long_in, radius):
 
 
 	return query_str
-
