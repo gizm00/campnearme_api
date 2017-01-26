@@ -6,32 +6,20 @@ from flask import request
 import pandas as pd
 import numpy as np
 from geopy.distance import vincenty
-from config import ProductionConfig
+from config import DEBUG
 from database import init_db, db_session, engine
-from models import RidbFacilities, RidbCampsites, RidbFacilitiesSchema
+from models import RidbFacilities, RidbFacilitySchema, RidbFacilityDetailSchema
 import utilities
-
-
-
-def replace_nan(value):
-	try :
-		if np.isnan(value):
-			return None
-	except:
-		err = "value is not NaN convertable"
-
-	if (value == 'NaN'):
-		return None
-	else:
-		return value
 
 def process_data(df_items):
 	try:
 		items = df_items.to_dict(orient='records')
 		count = len(df_items.index)
-		return {'items':items, 'count':count}
+		return jsonify({'items':items, 'count':count})
 	except Exception as ex:
-		return {'error':'could not process data into json format' + str(ex), 'status_code':500}
+		resp =  jsonify({'error':'could not process data into json format' + str(ex)})
+		resp.status_code = 500
+		return resp
 
 def clean_start_limit(start_id, limit):
 	if not start_id:
@@ -59,8 +47,8 @@ def clean_start_limit(start_id, limit):
 
 app = Flask(__name__)
 ridb_facilities = RidbFacilities()
-ridb_campsites = RidbCampsites()
-facilities_schema = RidbFacilitiesSchema(many=True)
+facilities_schema = RidbFacilitySchema(many=True)
+facility_detail_schema = RidbFacilityDetailSchema(many=True)
 #db.init_app(app)
 
 #### api
@@ -78,21 +66,25 @@ def getAllFacilities():
 	limit = request.args.get('limit')
 	sl_dict = clean_start_limit(start_id,limit)
 	if 'error' in sl_dict:
-		return jsonify({'error': sl_dict['error'], 'status_code': 404})
+		resp = jsonify({'error': sl_dict['error']})
+		resp.status_code = 400
+		return resp
 
 	start_id = sl_dict['start_id']
 	limit = sl_dict['limit']
 	end_id = start_id + limit-1
 	facilities_query = db_session.query(RidbFacilities)
 	if start_id > facilities_query.count():
-		return jsonify({'error': "start_id out of bounds", 'status_code':404})
+		resp = jsonify({'error': "start_id out of bounds"})
+		resp.status_code = 400
+		return resp
 
 	facilities = facilities_query.filter(RidbFacilities.facilityindex >= start_id,
 		RidbFacilities.facilityindex <= end_id)
 
 	count = facilities.count()
 	res = facilities_schema.dump(facilities)
-	print(jsonify({'items':res.data}))
+
 	return jsonify({'count':count, 'items': res.data})
 
 
@@ -105,58 +97,59 @@ def getFacilitiesNear():
 	radius = request.args.get('radius')
 
 	if ((not lat) or (not lon) or (not radius)):
-		return jsonify({'error':'Must specify lat, lon, and radius for GetFacilitiesNear query', 'status_code':404})
+		resp = jsonify({'error':'Must specify lat, lon, and radius for GetFacilitiesNear query'})
+		resp.status_code = 400
+		return resp
 
 	try:
 		lat = float(lat)
 		lon = float(lon)
 		radius = float(radius)
 	except Exception as ex:
-		return jsonify({'error':"Must supply numerical values for lat, long, and radius", 'status_code':404})
+		resp = jsonify({'error':"Must supply numerical values for lat, long, and radius"})
+		resp.status_code = 400
+		return resp
 
 	if (radius > 50):
-		return jsonify({'error':'radius must be <= 50 miles', 'status_code':404})
+		resp = jsonify({'error':'radius must be <= 50 miles'})
+		resp.status_code = 400
+		return resp
 
 	query_string = utilities.create_radial_query(lat,lon,radius)
 	df_items = pd.read_sql(query_string, engine)
-	return jsonify(process_data(df_items))
-
+	return process_data(df_items)
 
 
 # expect paramter campnear_id
 # GetFacilityDetails?campnear_id=2315
 @app.route('/GetFacilityDetails', methods=['GET'])
 def getFacilityDetails():
-	try :
-		cursor = mysql.connection.cursor()
-		try :
-			campnear_id = int(request.args.get('campnear_id'))
-		except Exception as ex:
-			return{'error':'campnear_id must be specified as an integer'},status.HTTP_400_BAD_REQUEST
-
-
-		query_string = 'SELECT * from toorcamp where campnear_id=' + str(campnear_id)
-		df_items = pd.read_sql(query_string, mysql.connection)
-		return(process_data(df_items))
-
+	campnear_id = request.args.get('campnear_id')
+	if not campnear_id:
+		resp = jsonify({'error':'campnear_id must be specified'})
+		resp.status_code = 400
+		return resp
+	try:
+		campnear_id = int(campnear_id)
 	except Exception as ex:
-		return {'error':str(ex)},status.HTTP_400_BAD_REQUEST
+		resp = jsonify({'error':'campnear_id must be specified as an integer'})
+		resp.status_code = 400
+		return resp
+
+	facilities_query = db_session.query(RidbFacilities)
+	facility_details = facilities_query.filter(RidbFacilities.facilityindex == campnear_id)
+	res = facility_detail_schema.dump(facility_details)
+	return jsonify({'result':res.data})
 
 @app.route('/GetAvailableFacilities', methods=['GET'])
 def getAvailableFacilities():
-	try:
-		cursor = mysql.connection.cursor()
-		query_string = 'SELECT * from toorcamp where sites_available > 0'
-		df_items = pd.read_sql(query_string, mysql.connection)
-		return(process_data(df_items))
+	facilities_query = db_session.query(RidbFacilities)
 
-	except Exception as ex:
-		return {'error':str(ex)},status.HTTP_400_BAD_REQUEST
-
-
+	# replace staylimit with availability
+	avail_facilities = facilities_query.filter(RidbFacilities.staylimit > 0)
+	res = facilities_schema.dump(avail_facilities)
+	return jsonify({'items':res.data, 'count':avail_facilities.count()})
 
 if __name__ == "__main__":
-	#global session
-	#session = loadSession()
 	init_db()
-	app.run(debug=True)
+	app.run(debug=DEBUG)

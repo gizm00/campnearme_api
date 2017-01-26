@@ -9,18 +9,21 @@ class RidbCampsites(Base):
     __tablename__ = 'ridb_campgrounds_orig'
     __table_args__ = {'autoload':True, 'autoload_with': engine}
 
-class RidbFacilitiesSchema(Schema):
+class RidbFacilitySchema(Schema):
+    facilityid = fields.Int()
+    facilitylatitude = fields.Float()
+    facilitylongitude = fields.Float()
+    facilityname = fields.Str()
+    facilityphone = fields.Str()
+    facilityindex = fields.Int()
+
+class RidbFacilityDetailSchema(RidbFacilitySchema):
     index = fields.Int()
     facilityadaaccess = fields.Str()
     facilitydescription = fields.Str()
     facilitydirections = fields.Str()
     facilityemail = fields.Str()
-    facilityid = fields.Int()
-    facilitylatitude = fields.Float()
-    facilitylongitude = fields.Float()
     facilitymapurl = fields.Str()
-    facilityname = fields.Str()
-    facilityphone = fields.Str()
     facilityreservationurl = fields.Str()
     facilitytypedescription = fields.Str()
     facilityusefeedescription = fields.Str()
@@ -30,4 +33,3 @@ class RidbFacilitiesSchema(Schema):
     orgfacilityid = fields.Str()
     staylimit = fields.Float()
     acquisitiondate = fields.Str()
-    facilityindex = fields.Int()
