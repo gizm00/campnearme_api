@@ -1,58 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
- 
-<head>
-    <title>campnear.me API</title>
- 
- 
-    <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
- 
-    <link href="http://getbootstrap.com/examples/jumbotron-narrow/jumbotron-narrow.css" rel="stylesheet">
- 
- 
-</head>
- 
-<body>
- 
-    <div class="container">
-        <div class="header">
-            <nav>
-                <ul class="nav nav-pills pull-right">
-                    <li role="presentation" class="active"><a href="#">Home</a>
-                    </li>
-                </ul>
-            </nav>
-            <h3 class="text-muted">campnear.me API</h3>
-        </div>
- 
-        <div class="jumbotron">
-            <h1>campnear.me dev API</h1>
-            <p class="lead"></p>
-        </div>
- 
+{% extends "layout.html" %}
+{% block headertext %}
+campnear.me dev API
+{% endblock %}
+{% block content %}
         <div class="row marketing">
             <div class="col-lg-6">
                 <h4>Data Definition</h4>
-                <p>OMG so many fields? What does it mean? <a href="static/datadef.html">Find out here...</a></p>
- 
-                <h4>Toorcamp!</h4>
-                <p>Version 0.0001 is teetering about and ready for Toorcamp. <a href="static/toorcamp.html">Some fun toys you might like</a></p>
+                <p>Check <a href="/data_definition">here</a> to find out what various fields mean and their expected values.</p>
+
+
 		</div>
  	<div class="col-lg-6">
                 <h4>Data Notes</h4>
-                <p><a href="static/datastate.html">State of the Data.</a> Things you might like to know when working with the campnear.me API</p>
- 
+                <p><a href="/data_info">State of the Data.</a> Things you might like to know when working with the campnear.me API</p>
+
                 <h4>API examples</h4>
-                <p>Some tips for using the API and (I'm fairly sure) <a href="static/apiexamples.html">working examples</a></p>
- 
+                <p>Some tips for using the API and (I'm fairly sure) <a href="/api_examples">working examples</a></p>
+
             </div>
         </div>
- 
-        <footer class="footer">
-            <p>&copy; MxLeonard, <a href="http://www.thedatascout.com" target=_blank>The Data Scout</a> 2016</p>
-        </footer>
- 
-    </div>
-</body>
- 
-</html>
+ {% endblock %}

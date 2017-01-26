@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>campnear.me API</title>
+
+
+    <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link href="http://getbootstrap.com/examples/jumbotron-narrow/jumbotron-narrow.css" rel="stylesheet">
+
+
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="header">
+            <nav>
+                <ul class="nav nav-pills pull-right">
+                    <li role="presentation" class="active"><a href="http://api.campnear.me">Home</a>
+                    </li>
+                </ul>
+            </nav>
+            <h3 class="text-muted">campnear.me API</h3>
+        </div>
+
+        <div class="jumbotron">
+            <h1>{% block headertext %}{% endblock %}</h1>
+            <p class="lead"></p>
+        </div>
+        {% block content %}{% endblock %}
+
+    <footer class="footer">
+        <p>&copy; MxLeonard, <a href="http://www.thedatascout.com" target=_blank>The Data Scout</a> 2017</p>
+    </footer>
+    </div>
+</body>

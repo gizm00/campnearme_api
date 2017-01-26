@@ -56,10 +56,22 @@ facility_detail_schema = RidbFacilityDetailSchema(many=True)
 def hello():
 	return render_template('index.html')
 
+@app.route('/data_definition', methods=['GET'])
+def datadef():
+	return render_template('datadef.html')
+
+@app.route('/api_examples', methods=['GET'])
+def apiex():
+	return render_template('apiexamples.html')
+
+@app.route('/data_info', methods=['GET'])
+def datainfo():
+	return render_template('datastate.html')
+
 # expect GetFacilityDetails with optional params limit (max 50) and start_index
 # start_index is the campnear_id field, sequential from 0 to num records
 # GetFacilityDetails?start_id=start_index&limit=int_records
-@app.route('/GetAllFacilities', methods=['GET'])
+@app.route('/GetFacilities', methods=['GET'])
 def getAllFacilities():
 	# look for optional params
 	start_id = request.args.get('start_id')

@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+{% block headertext %}
+API Examples
+{% endblock %}
+{% block content %}
+
+        <div class="row marketing">
+            <div class="col-lg-12">
+		Here are some examples to show you how to use the campnear.me API
+		<br>
+		<h4>http://api.campnear.me/GetFacilities</h4>
+    <u>optional parameters:</u> start_id = facilityindex to start from, limit = number of records to return (max 50)
+		Without any additional parameters, GetFacilities will return the first 50 records in the database:
+		 <a href="http://api.campnear.me/GetFacilities" target=_blank>http://api.campnear.me/GetFacilities</a>.
+		<br>
+		<br>
+		To get more campgrounds, simply note the last facilityindex in the result set and start right after that in another query:<br>
+		<a href="http://api.campnear.me/GetFacilities?start_id=51" target=_blank>http://api.campnear.me/GetFacilities?start_id=51</a><br>
+		<br>
+		And finally, if you want less than 50 records you can modify the number of records retrieved with the 'limit' parameter:<br>
+		<a href="http://api.campnear.me/GetFacilities?start_id=51&limit=2" target=_blank>http://api.campnear.me/GetFacilities?start_id=51&limit=2</a><br>
+    <br>
+    <h4>http://api.campnear.me/GetFacilityDetails</h4>
+    Retrieve the facility details for a given facilityindex specified in the <i>campnear_id</i> argument.
+     <a href="http://api.campnear.me/GetFacilityDetails?campnear_id=1026" target=_blank>http://api.campnear.me/GetFacilityDetails?campnear_id=1026</a>.
+    <br>
+		<br>
+		<h4>http://api.campnear.me/GetFacilitiesNear</h4>
+		The GetFacilitiesNear endpoint returns up to 50 records within the geographic area you define:
+		<ul>
+			<li>lat: latitude in degrees</li>
+			<li>lon: longitude in degrees</li>
+			<li>radius: search radius in miles (limit 50)</li>
+		</ul>
+		For example, to search for campgrounds within a 20 mile radius of Portland OR you can perform the following query:<br>
+		<a href="http://api.campnear.me/GetFacilitiesNear?lat=45.23&lon=-122.42&radius=20" target=_blank>http://api.campnear.me/GetFacilitiesNear?lat=45.23&lon=-122.42&radius=20</a><br>
+		You will see a field "D" in the resulting json which provides the exact distance (in miles) between the input lat/long and the campground.
+   <br>
+   <h4>http://api.campnear.me/GetAvailableFacilities</h4>
+   Retrieve all facilities that have availability.
+   <a href="http://api.campnear.me/GetAvailableFacilities">http://api.campnear.me/GetAvailableFacilities</a>
+   <br>
+   <br>
+  </div>
+  </div>
+
+{% endblock %}
